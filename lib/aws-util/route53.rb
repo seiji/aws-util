@@ -18,15 +18,22 @@ module Aws
       method_option :file, :desc => "YAML file of defaults for any option. Options given during execution override these."
 
       def upsert
-        std_date = DateTime.now
         settings = options
         dns = Fog::DNS::AWS.new(:aws_access_key_id => settings[:aws_access_key_id],
                                 :aws_secret_access_key => settings[:aws_secret_access_key],
                                 )
         hosted_zone_id = settings[:aws_route53_hosted_zone_id]
-
         resource_records = settings[:aws_route53_resource_records]
         options = { :comment => 'upsert records from cui.'}
+
+        resource_records = resource_records.map{|r|
+          if (r[:type] == 'DDNS')
+            r[:type] = 'A'
+            ip = `curl http://ifconfig.me/ip`.chomp
+            r[:resource_records] = [ip]
+          end
+          r
+        }
         dns.change_resource_record_sets(hosted_zone_id,
                                         resource_records,
                                         options)
