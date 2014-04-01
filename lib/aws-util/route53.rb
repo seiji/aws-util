@@ -1,6 +1,7 @@
 require 'thor'
 require 'yaml'
 require 'fog'
+require 'net/http'
 
 module Aws
   module Util
@@ -29,7 +30,7 @@ module Aws
         resource_records = resource_records.map{|r|
           if (r[:type] == 'DDNS')
             r[:type] = 'A'
-            ip = `curl http://ifconfig.me/ip`.chomp
+            ip = Net::HTTP.get('ifconfig.me', '/ip').chomp
             r[:resource_records] = [ip]
           end
           r
