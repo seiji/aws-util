@@ -11,7 +11,7 @@ module Aws
         super
       end
 
-      desc "mysql", "Runs a mysqldump from a restored snapshot of the specified RDS instance"
+      desc "mysqldump", "Runs a mysqldump from a restored snapshot of the specified RDS instance"
       method_option :aws_region, :default => "ap-northeast-1", :desc => "Region of your RDS server"
       method_option :aws_access_key_id, :desc => "Access key of your aws account"
       method_option :aws_secret_access_key, :desc => "Secret access key of your aws account"
@@ -24,7 +24,7 @@ module Aws
       method_option :dump_directory, :default => '/tmp/', :desc => "Where to store the temporary sql dump file."
       method_option :file, :desc => "YAML file of defaults for any option. Options given during execution override these."
 
-      def mysql
+      def mysqldump
         std_date = DateTime.now
         settings = options
         rds = Fog::AWS::RDS.new(:aws_access_key_id => settings[:aws_access_key_id],
